@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * 2011-2017 PH2M
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0) that is available
+ * through the world-wide-web at this URL: http://www.opensource.org/licenses/OSL-3.0
+ * If you are unable to obtain it through the world-wide-web, please send an email
+ * to agence@reflet-digital.com so we can send you a copy immediately.
+ *
+ * @author PH2M - contact@ph2m.com
+ * @copyright 2001-2017 PH2M
+ * @license http://www.opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="logistic" translate="label" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Logistic</label>
+            <tab>service</tab>
+            <resource>PH2M_Logistic::config_logistic</resource>
+            <group id="connection" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Connection</label>
+                <field id="type" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Type</label>
+                    <source_model>PH2M\Logistic\Model\Config\Source\Connectiontype</source_model>
+                </field>
+                <field id="host" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Host</label>
+                </field>
+                <field id="port" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Port</label>
+                    <comment><![CDATA[If empty, 21 will be used for FTP and 22 for SFTP]]></comment>
+                </field>
+                <field id="username" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Username</label>
+                </field>
+                <field id="password" translate="label" type="password" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Password</label>
+                </field>
+            </group>
+            <group id="import" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Import</label>
+                <field id="product_enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable for products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="product_path" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Products files path</label>
+                    <depends>
+                        <field id="product_enable">1</field>
+                    </depends>
+                </field>
+                <field id="product_file_pattern" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Products files pattern</label>
+                    <comment><![CDATA[Should be a regular expression, e.g. /^PRODUCT-.*\.csv$/]]></comment>
+                    <depends>
+                        <field id="product_enable">1</field>
+                    </depends>
+                </field>
+                <field id="product_archive_path" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Products archives files path</label>
+                    <depends>
+                        <field id="product_enable">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="export" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Export</label>
+                <field id="order_enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable for orders</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="order_path" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Orders files path</label>
+                    <comment><![CDATA[Path where to put the orders files in]]></comment>
+                    <depends>
+                        <field id="order_enable">1</field>
+                    </depends>
+                </field>
+                <field id="customer_enable" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable for customers</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="customer_path" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Customers files path</label>
+                    <comment><![CDATA[Path where to put the customers files in]]></comment>
+                    <depends>
+                        <field id="customer_enable">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
