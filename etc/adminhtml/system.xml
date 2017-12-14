@@ -21,7 +21,21 @@
             <label>Logistic</label>
             <tab>service</tab>
             <resource>PH2M_Logistic::config_logistic</resource>
-            <group id="connection" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="log_enable" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable logs</label>
+                    <comment><![CDATA[Logs will be stored into var/log/logistic.log]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="field_separator" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Field separator</label>
+                </field>
+                <field id="field_enclosure" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Field enclosure</label>
+                </field>
+            </group>
+            <group id="connection" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Connection</label>
                 <field id="type" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Type</label>
@@ -41,33 +55,10 @@
                     <label>Password</label>
                 </field>
             </group>
-            <group id="import" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="import" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Import</label>
-                <field id="product_enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable for products</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="product_path" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Products files path</label>
-                    <depends>
-                        <field id="product_enable">1</field>
-                    </depends>
-                </field>
-                <field id="product_file_pattern" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Products files pattern</label>
-                    <comment><![CDATA[Should be a regular expression, e.g. /^PRODUCT-.*\.csv$/]]></comment>
-                    <depends>
-                        <field id="product_enable">1</field>
-                    </depends>
-                </field>
-                <field id="product_archive_path" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Products archives files path</label>
-                    <depends>
-                        <field id="product_enable">1</field>
-                    </depends>
-                </field>
             </group>
-            <group id="export" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="export" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Export</label>
                 <field id="order_enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable for orders</label>

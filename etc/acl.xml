@@ -19,6 +19,11 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::system">
+                    <resource id="Magento_Backend::convert">
+                        <resource id="PH2M_Logistic::log" title="Logistic logs" translate="title" sortOrder="100" />
+                    </resource>
+                </resource>
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">

@@ -48,6 +48,17 @@ The following steps are for a new import class but they are the same for an expo
     - `<code>_path`: a `text` field
     - `<code>_file_pattern`: a `text` field
     - `<code>_archive_path`: a `text` field. Note that this field is not required for an export
+- If necessary, override the `columnsToIgnore` parameter to ignore some columns
+- If necessary, override the `columnsToRename` parameter to rename some header columns to real product attributes codes:
+    ```
+    /**
+     * @var array
+     */
+    protected $columnsToRename = [
+        'columnFromFile' => 'newColumnName'
+    ]; 
+    ```
+- If necessary, override the `columnsFixedValue` parameter to add some fixed values (attribute set if it's not defined in your CSV file for example)
 
 Licence
 -------

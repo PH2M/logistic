@@ -16,11 +16,22 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\Framework\Console\CommandListInterface">
+    <preference for="PH2M\Logistic\Api\Data\LogInterface" type="PH2M\Logistic\Model\Log" />
+    <preference for="PH2M\Logistic\Api\LogRepositoryInterface" type="PH2M\Logistic\Model\LogRepository" />
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
-            <argument name="commands" xsi:type="array">
-                <item name="importProductsCommand" xsi:type="object">PH2M\Logistic\Console\Command\ImportProductsCommand</item>
+            <argument name="collections" xsi:type="array">
+                <item name="logistic_log_listing_data_source" xsi:type="string">PH2M\Logistic\Model\ResourceModel\Log\Grid\Collection</item>
             </argument>
+        </arguments>
+    </type>
+    <type name="PH2M\Logistic\Model\ResourceModel\Log\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">logistic_log</argument>
+            <argument name="eventPrefix" xsi:type="string">logistic_log_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">log_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">PH2M\Logistic\Model\ResourceModel\Log</argument>
         </arguments>
     </type>
 </config>

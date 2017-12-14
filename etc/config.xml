@@ -18,6 +18,11 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <logistic>
+            <general>
+                <log_enable>0</log_enable>
+                <field_separator><![CDATA[,]]></field_separator>
+                <field_enclosure><![CDATA["]]></field_enclosure>
+            </general>
             <import>
                 <product_enable>0</product_enable>
                 <stock_enable>0</stock_enable>
