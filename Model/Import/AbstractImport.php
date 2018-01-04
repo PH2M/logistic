@@ -298,8 +298,12 @@ abstract class AbstractImport
 
             $productData = [];
 
+            if (trim($data[0]) === '') {
+                continue;
+            }
+
             foreach ($data as $index => $value) {
-                if (trim($value) === '') {
+                if (!array_key_exists($index, $header)) {
                     continue;
                 }
                 if (in_array($header[$index], $this->columnsToIgnore)) {

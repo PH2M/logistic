@@ -64,6 +64,13 @@ Licence
 -------
 [GNU General Public License, version 3 (GPLv3)](http://opensource.org/licenses/gpl-3.0)
 
+Troubleshooting
+---------------
+```
+This file does not contain any data.
+```
+I have seen this issue because I was trying to import a product attribute which had a code in camel case, ie `MyAttribute`. Replace it by `my_attribute`.
+
 Special thanks
 --------------
 Special thanks to Firegento and all contributors to the [FastSimpleImport extension](https://github.com/firegento/FireGento_FastSimpleImport2)!

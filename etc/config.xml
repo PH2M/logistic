@@ -23,12 +23,6 @@
                 <field_separator><![CDATA[,]]></field_separator>
                 <field_enclosure><![CDATA["]]></field_enclosure>
             </general>
-            <import>
-                <product_enable>0</product_enable>
-                <stock_enable>0</stock_enable>
-                <order_enable>0</order_enable>
-                <customer_enable>0</customer_enable>
-            </import>
         </logistic>
     </default>
 </config>
