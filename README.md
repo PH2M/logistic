@@ -70,6 +70,7 @@ Troubleshooting
 This file does not contain any data.
 ```
 I have seen this issue because I was trying to import a product attribute which had a code in camel case, ie `MyAttribute`. Replace it by `my_attribute`.
+It can also happen if your data has a bad format, ie you're trying to import an array as value.
 
 Special thanks
 --------------
