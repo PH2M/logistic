@@ -29,6 +29,7 @@ use PH2M\Logistic\Model\Config\Source\Connectiontype;
 use PH2M\Logistic\Model\Log;
 use PH2M\Logistic\Model\LogFactory;
 use PH2M\Logistic\Api\LogRepositoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Class ImportAbstract
@@ -122,6 +123,21 @@ abstract class AbstractImport
     protected $hasError = false;
 
     /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
+     * @var array
+     */
+    protected $websitesCodes = [];
+
+    /**
+     * @var array
+     */
+    protected $storesCodes = [];
+
+    /**
      * AbstractImport constructor.
      * @param Ftp $ftp
      * @param Sftp $sftp
@@ -131,6 +147,7 @@ abstract class AbstractImport
      * @param ImporterFactory $importerFactory
      * @param LogFactory $logFactory
      * @param LogRepositoryInterface $logRepository
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         Ftp $ftp,
@@ -140,7 +157,8 @@ abstract class AbstractImport
         Connectiontype $connectiontypeSource,
         ImporterFactory $importerFactory,
         LogFactory $logFactory,
-        LogRepositoryInterface $logRepository
+        LogRepositoryInterface $logRepository,
+        StoreManagerInterface $storeManager
     ) {
         $this->ftp                  = $ftp;
         $this->sftp                 = $sftp;
@@ -150,6 +168,7 @@ abstract class AbstractImport
         $this->importerFactory      = $importerFactory;
         $this->logFactory           = $logFactory;
         $this->logRepository        = $logRepository;
+        $this->storeManager         = $storeManager;
 
         $this->messages             = [];
     }
@@ -420,5 +439,37 @@ abstract class AbstractImport
     protected function _getConfig($group, $field)
     {
         return $this->scopeConfig->getValue('logistic/' . $group . '/' . $field, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @return array
+     */
+    protected function _getWebsitesCodes()
+    {
+        if (empty($this->websitesCodes)) {
+            $websites = $this->storeManager->getWebsites();
+
+            foreach ($websites as $website) {
+                $this->websitesCodes[] = $website->getCode();
+            }
+        }
+
+        return $this->websitesCodes;
+    }
+
+    /**
+     * @return array
+     */
+    protected function _getStoresCodes()
+    {
+        if (empty($this->storesCodes)) {
+            $stores = $this->storeManager->getStores();
+
+            foreach ($stores as $store) {
+                $this->storesCodes[] = $store->getCode();
+            }
+        }
+
+        return $this->storesCodes;
     }
 }
