@@ -7,7 +7,7 @@
  * This source file is subject to the Open Software License (OSL 3.0) that is available
  * through the world-wide-web at this URL: http://www.opensource.org/licenses/OSL-3.0
  * If you are unable to obtain it through the world-wide-web, please send an email
- * to agence@reflet-digital.com so we can send you a copy immediately.
+ * to contact@ph2m.com so we can send you a copy immediately.
  *
  * @author PH2M - contact@ph2m.com
  * @copyright 2001-2017 PH2M
@@ -19,8 +19,6 @@ use PH2M\Logistic\Api\Data\LogInterface;
 use PH2M\Logistic\Api\LogRepositoryInterface;
 use Magento\Framework\Exception\CouldNotSaveException;
 use PH2M\Logistic\Model\ResourceModel\Log as ResourceLog;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set as AttributeSetResource;
-
 
 /**
  * Class LogRepository

@@ -37,7 +37,7 @@ To do list
 - [ ] Complete unit tests
 - [ ] Add WS connection type
 
-Add another import/export
+Add another import
 -------------------------
 The following steps are for a new import class but they are the same for an export one. Just use export class/folders instead.
 
@@ -59,6 +59,17 @@ The following steps are for a new import class but they are the same for an expo
     ]; 
     ```
 - If necessary, override the `columnsFixedValue` parameter to add some fixed values (attribute set if it's not defined in your CSV file for example)
+
+Add a custom object import
+--------------------------
+If you want to import a custom object (stores from a store locator for example), override the `_launchImporter` method in your import class.
+This method should return an array which has a `success` and a `message` (in case of error) value.
+
+Add another export
+------------------
+- Create a class which extends the `PH2M\Logistic\Model\Export\AbstractExport\` class
+- In this class, add a `code` parameter
+| 
 
 Licence
 -------

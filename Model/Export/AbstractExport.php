@@ -1,6 +1,6 @@
 <?php
 /**
- * 2011-2017 PH2M
+ * 2011-2018 PH2M
  *
  * NOTICE OF LICENSE
  *
@@ -10,12 +10,11 @@
  * to contact@ph2m.com so we can send you a copy immediately.
  *
  * @author PH2M - contact@ph2m.com
- * @copyright 2001-2017 PH2M
+ * @copyright 2011-2018 PH2M
  * @license http://www.opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  */
-namespace PH2M\Logistic\Model\Import;
+namespace PH2M\Logistic\Model\Export;
 
-use FireGento\FastSimpleImport\Model\ImporterFactory;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\FileSystemException;
@@ -32,10 +31,10 @@ use PH2M\Logistic\Api\LogRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Class ImportAbstract
- * @package PH2M\Logistic\Model\Import
+ * Class AbstractExport
+ * @package PH2M\Logistic\Model\Export
  */
-abstract class AbstractImport
+abstract class AbstractExport
 {
     /**
      * @var string
@@ -45,7 +44,7 @@ abstract class AbstractImport
     /**
      * @var array
      */
-    protected $columnsToIgnore = [];
+    protected $columnsToExport = [];
 
     /**
      * @var array
@@ -136,11 +135,6 @@ abstract class AbstractImport
      * @var array
      */
     protected $storesCodes = [];
-
-    /**
-     * @var string
-     */
-    protected $entityCode = 'catalog_product';
 
     /**
      * AbstractImport constructor.
@@ -377,8 +371,6 @@ abstract class AbstractImport
         try {
             /** @var \FireGento\FastSimpleImport\Model\Importer $importer */
             $importer = $this->importerFactory->create();
-
-            $importer->setEntityCode($this->entityCode);
 
             $dataToImport = $this->_beforeImportData($dataToImport);
             $importer->processImport($dataToImport);
