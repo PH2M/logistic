@@ -24,7 +24,7 @@ use Magento\Framework\Filesystem\DriverPool;
 use Magento\Framework\Filesystem\Io\Ftp;
 use Magento\Framework\Filesystem\Io\Sftp;
 use Magento\Framework\Filesystem\File\ReadFactory;
-use Magento\Store\Model\ScopeInterface;
+use PH2M\Logistic\Model\AbstractImportExport;
 use PH2M\Logistic\Model\Config\Source\Connectiontype;
 use PH2M\Logistic\Model\Log;
 use PH2M\Logistic\Model\LogFactory;
@@ -35,13 +35,8 @@ use Magento\Store\Model\StoreManagerInterface;
  * Class ImportAbstract
  * @package PH2M\Logistic\Model\Import
  */
-abstract class AbstractImport
+abstract class AbstractImport extends AbstractImportExport
 {
-    /**
-     * @var string
-     */
-    protected $code = 'override_me';
-
     /**
      * @var array
      */
@@ -58,44 +53,14 @@ abstract class AbstractImport
     protected $columnsFixedValues = [];
 
     /**
-     * @var Ftp
-     */
-    protected $ftp;
-
-    /**
-     * @var Sftp
-     */
-    protected $sftp;
-
-    /**
      * @var ReadFactory
      */
     protected $fileReaderFactory;
 
     /**
-     * @var ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /**
-     * @var Connectiontype
-     */
-    protected $connectionTypeSource;
-
-    /**
      * @var array
      */
     protected $filesToImport = [];
-
-    /**
-     * @var string
-     */
-    protected $fieldSeparator;
-
-    /**
-     * @var string
-     */
-    protected $fieldEnclosure;
 
     /**
      * @var ImporterFactory
@@ -111,16 +76,6 @@ abstract class AbstractImport
      * @var LogRepositoryInterface
      */
     protected $logRepository;
-
-    /**
-     * @var array
-     */
-    protected $messages;
-
-    /**
-     * @var bool
-     */
-    protected $hasError = false;
 
     /**
      * @var StoreManagerInterface
@@ -155,27 +110,23 @@ abstract class AbstractImport
      * @param StoreManagerInterface $storeManager
      */
     public function __construct(
-        Ftp $ftp,
-        Sftp $sftp,
         ReadFactory $fileReaderFactory,
-        ScopeConfigInterface $scopeConfig,
-        Connectiontype $connectiontypeSource,
         ImporterFactory $importerFactory,
         LogFactory $logFactory,
         LogRepositoryInterface $logRepository,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        Ftp $ftp,
+        Sftp $sftp,
+        ScopeConfigInterface $scopeConfig,
+        Connectiontype $connectiontypeSource
     ) {
-        $this->ftp                  = $ftp;
-        $this->sftp                 = $sftp;
         $this->fileReaderFactory    = $fileReaderFactory;
-        $this->scopeConfig          = $scopeConfig;
-        $this->connectionTypeSource = $connectiontypeSource;
         $this->importerFactory      = $importerFactory;
-        $this->logFactory           = $logFactory;
-        $this->logRepository        = $logRepository;
         $this->storeManager         = $storeManager;
 
         $this->messages             = [];
+
+        parent::__construct($ftp, $sftp, $scopeConfig, $logRepository, $logFactory, $connectiontypeSource);
     }
 
     /**
@@ -192,6 +143,19 @@ abstract class AbstractImport
     }
 
     /**
+     * @throws NotFoundException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     */
+    protected function _initConnection()
+    {
+        parent::_initConnection();
+
+        if (!$this->connection->cd($this->_getConfig('import', $this->code . '_path'))) {
+            throw new NotFoundException(__('Import %1 path does not exist', $this->code));
+        }
+    }
+
+    /**
      * - Connect to distant server (FTP or SFTP)
      * - Retrieve the matching files and download them to var/logistic folder
      *
@@ -201,49 +165,21 @@ abstract class AbstractImport
      */
     protected function _downloadFiles()
     {
-        $connection = $this->_getConnection();
-        $host       = $this->_getConfig('connection', 'host');
+        $this->_initConnection();
 
-        if ($configPort = $this->_getConfig('connection', 'port')) {
-            $host .= ':' . $configPort;
-        }
+        $files = $this->_getFilesList();
 
-        $connection->open([
-            'host'      => $host,
-            'username'  => $this->_getConfig('connection', 'username'),
-            'password'  => $this->_getConfig('connection', 'password')
-        ]);
+        $this->_readFiles($files);
 
-        if (!$connection->cd($this->_getConfig('import', $this->code . '_path'))) {
-            throw new NotFoundException(__('Import %1 path does not exist', $this->code));
-        }
-
-        $files = $this->_getFilesList($connection);
-
-        $this->_readFiles($connection, $files);
-
-        $connection->close();
+        $this->connection->close();
     }
 
     /**
-     * @return Ftp|Sftp
-     * @throws \Magento\Framework\Exception\ValidatorException
-     */
-    protected function _getConnection()
-    {
-        $connectionType = $this->_getConfig('connection', 'type');
-        $this->connectionTypeSource->validateType($connectionType);
-
-        return $this->$connectionType;
-    }
-
-    /**
-     * @param Ftp|Sftp $connection
      * @return array
      */
-    protected function _getFilesList($connection)
+    protected function _getFilesList()
     {
-        $files = $connection->rawls();
+        $files = $this->connection->rawls();
 
         $filePattern = $this->_getConfig('import', $this->code . '_file_pattern');
 
@@ -254,11 +190,10 @@ abstract class AbstractImport
     }
 
     /**
-     * @param Ftp|Sftp $connection
      * @param array $files
      * @throws FileSystemException
      */
-    protected function _readFiles($connection, $files)
+    protected function _readFiles($files)
     {
         if (!count($files)) {
             return;
@@ -272,7 +207,7 @@ abstract class AbstractImport
 
         foreach ($files as $file) {
             $filePath = $pathToSaveFiles . DIRECTORY_SEPARATOR . $file;
-            if ($connection->read($file, $filePath)) {
+            if ($this->connection->read($file, $filePath)) {
                 $this->filesToImport[] = $filePath;
             } else {
                 throw new FileSystemException(__('Error while save file to %1', $filePath));
@@ -281,14 +216,11 @@ abstract class AbstractImport
     }
 
     /**
-     *
+     * @throws \Magento\Framework\Exception\CouldNotSaveException
      */
     protected function _importDownloadedFiles()
     {
         if (count($this->filesToImport)) {
-            $this->fieldSeparator = $this->_getConfig('general', 'field_separator');
-            $this->fieldEnclosure = $this->_getConfig('general', 'field_enclosure');
-
             foreach ($this->filesToImport as $fileToImport) {
                 $this->_importFile($fileToImport);
             }
@@ -385,7 +317,6 @@ abstract class AbstractImport
 
             // TODO move file to archives
 
-            var_dump($importer->getErrorMessages());
             if ($importer->getValidationResult()) {
                 $result['success'] = true;
             } else {
@@ -471,16 +402,6 @@ abstract class AbstractImport
             ->setEntityType($this->code);
 
         $this->logRepository->save($log);
-    }
-
-    /**
-     * @param $group
-     * @param $field
-     * @return string
-     */
-    protected function _getConfig($group, $field)
-    {
-        return $this->scopeConfig->getValue('logistic/' . $group . '/' . $field, ScopeInterface::SCOPE_STORE);
     }
 
     /**

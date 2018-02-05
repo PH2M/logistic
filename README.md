@@ -42,14 +42,14 @@ Add another import
 The following steps are for a new import class but they are the same for an export one. Just use export class/folders instead.
 
 - Create a class which extends the `PH2M\Logistic\Model\Import\AbstractImport` class
-- In this class, add a `code` parameter
-- Add in your `system.xml` three configurations (replace `<code>` by your `code` parameter value):
+- In this class, add a `code` variable
+- Add in your `system.xml` these configurations (replace `<code>` by your `code` variable value):
     - `<code>_enable`: a `select` with a `Magento\Config\Model\Config\Source\Yesno` source model
     - `<code>_path`: a `text` field
     - `<code>_file_pattern`: a `text` field
-    - `<code>_archive_path`: a `text` field. Note that this field is not required for an export
-- If necessary, override the `columnsToIgnore` parameter to ignore some columns
-- If necessary, override the `columnsToRename` parameter to rename some header columns to real product attributes codes:
+    - `<code>_archive_path`: a `text` field
+- If necessary, override the `columnsToIgnore` variable to ignore some columns
+- If necessary, override the `columnsToRename` variable to rename some header columns to real product attributes codes:
     ```
     /**
      * @var array
@@ -58,7 +58,7 @@ The following steps are for a new import class but they are the same for an expo
         'columnFromFile' => 'newColumnName'
     ]; 
     ```
-- If necessary, override the `columnsFixedValue` parameter to add some fixed values (attribute set if it's not defined in your CSV file for example)
+- If necessary, override the `columnsFixedValue` variable to add some fixed values (attribute set if it's not defined in your CSV file for example)
 
 Add a custom object import
 --------------------------
@@ -68,8 +68,14 @@ This method should return an array which has a `success` and a `message` (in cas
 Add another export
 ------------------
 - Create a class which extends the `PH2M\Logistic\Model\Export\AbstractExport\` class
-- In this class, add a `code` parameter
-| 
+- In this class, add a `code` variable
+- If you don't want to create a file for each exported object, set the `createAFileForEachObject` variable to false 
+- Override `_getFileName` function to set the export file name
+- Override `_initObjectsToExport` function to return the objects to export
+- Add in your `system.xml` these configurations (replace `<code>` by your `code` variable value):
+    - `<code>_enable`: a `select` with a `Magento\Config\Model\Config\Source\Yesno` source model
+    - `<code>_path`: a `text` field
+- XML files are not supported at the moment, if you want to export as XML you have to override the `_exportObjects` function and send an empty header to `_createAndSendFile`
 
 Licence
 -------
