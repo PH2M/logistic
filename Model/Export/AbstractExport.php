@@ -220,12 +220,14 @@ abstract class AbstractExport extends AbstractImportExport
      */
     protected function _reportResult()
     {
-        /** @var Log $log */
-        $log = $this->logFactory->create();
-        
-        $log->setMessage(implode(' ', $this->messages))
-            ->setEntityType($this->code);
+        if (count($this->messages)) {
+            /** @var Log $log */
+            $log = $this->logFactory->create();
 
-        $this->logRepository->save($log);
+            $log->setMessage(implode(' ', $this->messages))
+                ->setEntityType($this->code);
+
+            $this->logRepository->save($log);
+        }
     }
 }
