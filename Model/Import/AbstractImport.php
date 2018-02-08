@@ -170,8 +170,6 @@ abstract class AbstractImport extends AbstractImportExport
         $files = $this->_getFilesList();
 
         $this->_readFiles($files);
-
-        $this->connection->close();
     }
 
     /**
@@ -227,6 +225,8 @@ abstract class AbstractImport extends AbstractImportExport
         } else {
             $this->messages[] = 'No file found';
         }
+
+        $this->connection->close();
     }
 
     /**
@@ -296,6 +296,8 @@ abstract class AbstractImport extends AbstractImportExport
                 }
             }
         }
+
+        $this->_moveFileToArchives($fileName);
     }
 
     /**
@@ -314,8 +316,6 @@ abstract class AbstractImport extends AbstractImportExport
 
             $dataToImport = $this->_beforeImportData($dataToImport);
             $importer->processImport($dataToImport);
-
-            // TODO move file to archives
 
             if ($importer->getValidationResult()) {
                 $result['success'] = true;
@@ -397,7 +397,6 @@ abstract class AbstractImport extends AbstractImportExport
             $log->setStatus(Log::STATUS_SUCCESS);
         }
 
-        \Magento\Framework\App\ObjectManager::getInstance()->get(\Psr\Log\LoggerInterface::class)->debug('a',['a' => $this->messages]);
         $log->setMessage(implode(PHP_EOL, $this->messages))
             ->setEntityType($this->code);
 
@@ -434,5 +433,18 @@ abstract class AbstractImport extends AbstractImportExport
         }
 
         return $this->storesCodes;
+    }
+
+    /**
+     * @param string $file
+     */
+    protected function _moveFileToArchives($file)
+    {
+        if ($archivesPath = $this->_getConfig('import', $this->code . '_archive_path')) {
+            if (!$this->connection->mv($file, $archivesPath . '/' . $file)) {
+                $this->hasError = true;
+                $this->messages[] = 'Error during moving file ' . $this->_getConfig('import', $this->code . '_path') . '/' . $file . ' to the archives';
+            }
+        }
     }
 }
