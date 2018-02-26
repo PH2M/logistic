@@ -161,6 +161,7 @@ abstract class AbstractExport extends AbstractImportExport
         }
 
         if (!$this->createAFileForEachObject) {
+            $fileName = $this->_getFileName(null);
             $this->_createAndSendFile($fileName, $header, $content);
         }
     }

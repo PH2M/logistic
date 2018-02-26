@@ -222,8 +222,6 @@ abstract class AbstractImport extends AbstractImportExport
             foreach ($this->filesToImport as $fileToImport) {
                 $this->_importFile($fileToImport);
             }
-        } else {
-            $this->messages[] = 'No file found';
         }
 
         $this->connection->close();
