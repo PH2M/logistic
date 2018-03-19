@@ -149,7 +149,7 @@ abstract class AbstractExport extends AbstractImportExport
                     $header[] = $columnName;
                 }
 
-                $line[] = $object->getData($attributeCode);
+                $line[] = $this->getDataFromObject($object, $attributeCode);
             }
 
             $content[] = $line;
@@ -230,5 +230,17 @@ abstract class AbstractExport extends AbstractImportExport
 
             $this->logRepository->save($log);
         }
+    }
+
+    /**
+     * Can be overriden if an attribute needs a special treatment
+     *
+     * @param $object
+     * @param $attributeCode
+     * @return mixed
+     */
+    protected function getDataFromObject($object, $attributeCode)
+    {
+        return $object->getData($attributeCode);
     }
 }
