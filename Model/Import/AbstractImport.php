@@ -257,7 +257,7 @@ abstract class AbstractImport extends AbstractImportExport
                 continue;
             }
 
-            $productData = [];
+            $lineData = [];
 
             if (trim($data[0]) === '') {
                 continue;
@@ -270,12 +270,14 @@ abstract class AbstractImport extends AbstractImportExport
                 if (in_array($header[$index], $this->columnsToIgnore)) {
                     continue;
                 }
-                $productData[trim($header[$index])] = trim($value);
+                $lineData[trim($header[$index])] = trim($value);
             }
 
-            $productData = $this->_addFixedValues($productData);
-            $productData = $this->_formatProductData($productData);
-            $dataToImport[] = $productData;
+            $lineData = $this->_addFixedValues($lineData);
+            $lineData = $this->_formatLineData($lineData);
+            if ($lineData) {
+                $dataToImport[] = $lineData;
+            }
         }
 
         if (count($dataToImport)) {
@@ -353,21 +355,21 @@ abstract class AbstractImport extends AbstractImportExport
     /**
      * Override this function to format a product data array
      *
-     * @param array $productData
+     * @param array $lineData
      * @return array
      */
-    protected function _formatProductData(array $productData)
+    protected function _formatLineData(array $lineData)
     {
-        return $productData;
+        return $lineData;
     }
 
     /**
-     * @param array $productData
+     * @param array $lineData
      * @return array
      */
-    protected function _addFixedValues(array $productData)
+    protected function _addFixedValues(array $lineData)
     {
-        return $productData + $this->columnsFixedValues;
+        return $lineData + $this->columnsFixedValues;
     }
 
     /**
