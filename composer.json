@@ -23,6 +23,8 @@
       "PH2M\\Logistic\\": ""
     }
   },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "repositories": {
     "firegento_extendedimport2": {
       "type": "vcs",
