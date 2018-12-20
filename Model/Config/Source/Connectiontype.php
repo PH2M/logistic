@@ -25,6 +25,7 @@ use Magento\Framework\Exception\ValidatorException;
  */
 class Connectiontype implements OptionSourceInterface
 {
+    const CONNECTION_TYPE_LOCAL = 'local';
     const CONNECTION_TYPE_FTP = 'ftp';
     const CONNECTION_TYPE_SFTP = 'sftp';
 
@@ -34,6 +35,7 @@ class Connectiontype implements OptionSourceInterface
     public function toOptionArray()
     {
         return [
+            ['value' => self::CONNECTION_TYPE_LOCAL, 'label' => __('Local')],
             ['value' => self::CONNECTION_TYPE_FTP, 'label' => __('FTP')],
             ['value' => self::CONNECTION_TYPE_SFTP, 'label' => __('SFTP')]
         ];

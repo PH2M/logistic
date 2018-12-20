@@ -20,10 +20,12 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Filesystem\Io\Ftp;
 use Magento\Framework\Filesystem\Io\Sftp;
+use Magento\Framework\Filesystem\Io\File;
 use Magento\Store\Model\ScopeInterface;
 use PH2M\Logistic\Api\LogRepositoryInterface;
 use PH2M\Logistic\Model\Config\Source\Connectiontype;
 use PH2M\Logistic\Model\LogFactory;
+use Magento\Framework\Filesystem\DirectoryList;
 
 /**
  * Class AbstractImportExport
@@ -45,6 +47,11 @@ abstract class AbstractImportExport
      * @var Sftp
      */
     protected $sftp;
+
+    /**
+     * @var File
+     */
+    protected $local;
 
     /**
      * @var Ftp|Sftp
@@ -87,6 +94,11 @@ abstract class AbstractImportExport
     protected $messages;
 
     /**
+     * @var DirectoryList
+     */
+    protected $dir;
+
+    /**
      * @var bool
      */
     protected $hasError = false;
@@ -103,17 +115,21 @@ abstract class AbstractImportExport
     public function __construct(
         Ftp $ftp,
         Sftp $sftp,
+        File $local,
         ScopeConfigInterface $scopeConfig,
         LogRepositoryInterface $logRepository,
         LogFactory $logFactory,
-        Connectiontype $connectiontypeSource
+        Connectiontype $connectiontypeSource,
+        DirectoryList $dir
     ) {
         $this->ftp                  = $ftp;
         $this->sftp                 = $sftp;
+        $this->local                = $local;
         $this->scopeConfig          = $scopeConfig;
         $this->logFactory           = $logFactory;
         $this->logRepository        = $logRepository;
         $this->connectionTypeSource = $connectiontypeSource;
+        $this->dir                  = $dir;
 
         $this->fieldSeparator = $this->_getConfig('general', 'field_separator');
         $this->fieldEnclosure = $this->_getConfig('general', 'field_enclosure');
@@ -135,17 +151,23 @@ abstract class AbstractImportExport
     protected function _initConnection()
     {
         $this->_setConnection();
-        $host = $this->_getConfig('connection', 'host');
 
-        if ($configPort = $this->_getConfig('connection', 'port')) {
-            $host .= ':' . $configPort;
+        if ($this->_getConfig('connection', 'type') !== Connectiontype::CONNECTION_TYPE_LOCAL){
+            $host = $this->_getConfig('connection', 'host');
+            if ($configPort = $this->_getConfig('connection', 'port')) {
+                $host .= ':' . $configPort;
+            }
+
+            $this->connection->open([
+                'host'      => $host,
+                'username'  => $this->_getConfig('connection', 'username'),
+                'password'  => $this->_getConfig('connection', 'password')
+            ]);
+        } else {
+            $this->connection->open([
+                'path' => $this->dir->getPath('var')
+            ]);
         }
-
-        $this->connection->open([
-            'host'      => $host,
-            'username'  => $this->_getConfig('connection', 'username'),
-            'password'  => $this->_getConfig('connection', 'password')
-        ]);
     }
 
     /**
@@ -154,6 +176,7 @@ abstract class AbstractImportExport
     protected function _setConnection()
     {
         $connectionType = $this->_getConfig('connection', 'type');
+
         $this->connectionTypeSource->validateType($connectionType);
 
         $this->connection = $this->$connectionType;

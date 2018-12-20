@@ -16,18 +16,20 @@
 namespace PH2M\Logistic\Model\Export;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\Filesystem\DirectoryList as FsDirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Filesystem\DriverPool;
 use Magento\Framework\Filesystem\File\WriteFactory;
 use Magento\Framework\Filesystem\Io\Ftp;
 use Magento\Framework\Filesystem\Io\Sftp;
+use Magento\Framework\Filesystem\Io\File;
 use PH2M\Logistic\Model\AbstractImportExport;
 use PH2M\Logistic\Model\Config\Source\Connectiontype;
 use PH2M\Logistic\Model\Log;
 use PH2M\Logistic\Model\LogFactory;
 use PH2M\Logistic\Api\LogRepositoryInterface;
+use Magento\Framework\Filesystem\DirectoryList;
 
 /**
  * Class AbstractExport
@@ -73,20 +75,24 @@ abstract class AbstractExport extends AbstractImportExport
         WriteFactory $fileWriteFactory,
         Ftp $ftp,
         Sftp $sftp,
+        File $local,
         ScopeConfigInterface $scopeConfig,
         LogRepositoryInterface $logRepository,
         LogFactory $logFactory,
-        Connectiontype $connectiontypeSource
+        Connectiontype $connectiontypeSource,
+        DirectoryList $dir
     ) {
         $this->fileWriteFactory = $fileWriteFactory;
 
         parent::__construct(
             $ftp,
             $sftp,
+            $local,
             $scopeConfig,
             $logRepository,
             $logFactory,
-            $connectiontypeSource
+            $connectiontypeSource,
+            $dir
         );
     }
 
@@ -176,7 +182,7 @@ abstract class AbstractExport extends AbstractImportExport
      */
     protected function _createAndSendFile($fileName, $header, $content)
     {
-        $pathToSaveFiles = BP . DIRECTORY_SEPARATOR . DirectoryList::VAR_DIR . DIRECTORY_SEPARATOR . 'logistic' . DIRECTORY_SEPARATOR . $this->code;
+        $pathToSaveFiles = BP . DIRECTORY_SEPARATOR . FsDirectoryList::VAR_DIR . DIRECTORY_SEPARATOR . 'logistic' . DIRECTORY_SEPARATOR . $this->code;
         if (!is_dir($pathToSaveFiles)) {
             mkdir($pathToSaveFiles, 0777, true);
         }

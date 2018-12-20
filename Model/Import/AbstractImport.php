@@ -16,13 +16,14 @@
 namespace PH2M\Logistic\Model\Import;
 
 use FireGento\FastSimpleImport\Model\ImporterFactory;
-use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\App\Filesystem\DirectoryList as FsDirectoryList;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Filesystem\DriverPool;
 use Magento\Framework\Filesystem\Io\Ftp;
 use Magento\Framework\Filesystem\Io\Sftp;
+use Magento\Framework\Filesystem\Io\File;
 use Magento\Framework\Filesystem\File\ReadFactory;
 use PH2M\Logistic\Model\AbstractImportExport;
 use PH2M\Logistic\Model\Config\Source\Connectiontype;
@@ -30,6 +31,7 @@ use PH2M\Logistic\Model\Log;
 use PH2M\Logistic\Model\LogFactory;
 use PH2M\Logistic\Api\LogRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Filesystem\DirectoryList;
 
 /**
  * Class ImportAbstract
@@ -117,8 +119,10 @@ abstract class AbstractImport extends AbstractImportExport
         StoreManagerInterface $storeManager,
         Ftp $ftp,
         Sftp $sftp,
+        File $local,
         ScopeConfigInterface $scopeConfig,
-        Connectiontype $connectiontypeSource
+        Connectiontype $connectiontypeSource,
+        DirectoryList $dir
     ) {
         $this->fileReaderFactory    = $fileReaderFactory;
         $this->importerFactory      = $importerFactory;
@@ -126,7 +130,7 @@ abstract class AbstractImport extends AbstractImportExport
 
         $this->messages             = [];
 
-        parent::__construct($ftp, $sftp, $scopeConfig, $logRepository, $logFactory, $connectiontypeSource);
+        parent::__construct($ftp, $sftp, $local, $scopeConfig, $logRepository, $logFactory, $connectiontypeSource, $dir);
     }
 
     /**
@@ -150,7 +154,13 @@ abstract class AbstractImport extends AbstractImportExport
     {
         parent::_initConnection();
 
-        if (!$this->connection->cd($this->_getConfig('import', $this->code . '_path'))) {
+        if ($this->_getConfig('connection', 'type') == Connectiontype::CONNECTION_TYPE_LOCAL){
+            $path = $this->dir->getPath('var') . $this->_getConfig('import', $this->code . '_path');
+        } else {
+            $path = $this->_getConfig('import', $this->code . '_path');
+        }
+
+        if (!$this->connection->cd($path)) {
             throw new NotFoundException(__('Import %1 path does not exist', $this->code));
         }
     }
@@ -177,14 +187,26 @@ abstract class AbstractImport extends AbstractImportExport
      */
     protected function _getFilesList()
     {
-        $files = $this->connection->rawls();
-
         $filePattern = $this->_getConfig('import', $this->code . '_file_pattern');
 
-        return array_keys(array_filter($files, function($fileDetails, $fileName) use ($filePattern) {
-            // It must be a file (type 1) and match the config pattern
-            return $fileDetails['type'] == 1 && preg_match($filePattern, $fileName);
-        }, ARRAY_FILTER_USE_BOTH));
+        if ($this->_getConfig('connection', 'type') == Connectiontype::CONNECTION_TYPE_LOCAL){
+            $files = $this->connection->ls(File::GREP_FILES);
+            $usedFiles = [];
+            foreach ($files as $file){
+                if (preg_match($filePattern, $file['text'])){
+                    $usedFiles[] = $file['text'];
+                }
+            }
+            return $usedFiles;
+        }
+        else {
+            $files = $this->connection->rawls();
+
+            return array_keys(array_filter($files, function($fileDetails, $fileName) use ($filePattern) {
+                // It must be a file (type 1) and match the config pattern
+                return $fileDetails['type'] == 1 && preg_match($filePattern, $fileName);
+            }, ARRAY_FILTER_USE_BOTH));
+        }
     }
 
     /**
@@ -197,9 +219,10 @@ abstract class AbstractImport extends AbstractImportExport
             return;
         }
 
-        $pathToSaveFiles = BP . DIRECTORY_SEPARATOR . DirectoryList::VAR_DIR . DIRECTORY_SEPARATOR . 'logistic' . DIRECTORY_SEPARATOR . $this->code;
+        $pathToSaveFiles = BP . DIRECTORY_SEPARATOR . FsDirectoryList::VAR_DIR . DIRECTORY_SEPARATOR . 'logistic' . DIRECTORY_SEPARATOR . $this->code;
 
         if (!is_dir($pathToSaveFiles)) {
+
             mkdir($pathToSaveFiles, 0777, true);
         }
 
@@ -275,6 +298,7 @@ abstract class AbstractImport extends AbstractImportExport
 
             $lineData = $this->_addFixedValues($lineData);
             $lineData = $this->_formatLineData($lineData);
+
             if ($lineData) {
                 $dataToImport[] = $lineData;
             }

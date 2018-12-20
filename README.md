@@ -10,8 +10,7 @@ Installation
 ------------
 ```
 composer require ph2m/logistic
-bin/magento module:enable FireGento_FastSimpleImport
-bin/magento module:enable PH2M_Logistic
+bin/magento module:enable FireGento_FastSimpleImport FireGento_ExtendedImport PH2M_Logistic
 bin/magento setup:upgrade
 ```
 
