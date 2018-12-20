@@ -76,6 +76,10 @@ Add another export
     - `<code>_path`: a `text` field
 - XML files are not supported at the moment, if you want to export as XML you have to override the `_exportObjects` function and send an empty header to `_createAndSendFile`
 
+Local import
+-------
+Local import must be placed in `/var` directory. You can next setup your import and archive paths like in the distant imports.
+
 Licence
 -------
 [GNU General Public License, version 3 (GPLv3)](http://opensource.org/licenses/gpl-3.0)
