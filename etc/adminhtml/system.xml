@@ -43,16 +43,28 @@
                 </field>
                 <field id="host" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Host</label>
+                    <depends>
+                        <field id="type" separator="|">sftp|ftp</field>
+                    </depends>
                 </field>
                 <field id="port" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Port</label>
                     <comment><![CDATA[If empty, 21 will be used for FTP and 22 for SFTP]]></comment>
+                    <depends>
+                        <field id="type" separator="|">sftp|ftp</field>
+                    </depends>
                 </field>
                 <field id="username" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Username</label>
+                    <depends>
+                        <field id="type" separator="|">sftp|ftp</field>
+                    </depends>
                 </field>
                 <field id="password" translate="label" type="password" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Password</label>
+                    <depends>
+                        <field id="type" separator="|">sftp|ftp</field>
+                    </depends>
                 </field>
             </group>
             <group id="import" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
