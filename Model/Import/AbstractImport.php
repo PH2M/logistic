@@ -462,14 +462,24 @@ abstract class AbstractImport extends AbstractImportExport
     }
 
     /**
-     * @param string $file
+     * @param $file
+     * @throws FileSystemException
      */
     protected function _moveFileToArchives($file)
     {
-        if ($archivesPath = $this->_getConfig('import', $this->code . '_archive_path')) {
-            if (!$this->connection->mv($file, $archivesPath . '/' . $file)) {
-                $this->hasError = true;
-                $this->messages[] = 'Error during moving file ' . $this->_getConfig('import', $this->code . '_path') . '/' . $file . ' to the archives';
+        if ($this->_getConfig('connection', 'type') == Connectiontype::CONNECTION_TYPE_LOCAL){
+            if ($archivesPath = $this->dir->getPath('var') . $this->_getConfig('import', $this->code . '_archive_path')){
+                if (!$this->connection->mv($file, $archivesPath . '/' . $file)) {
+                    $this->hasError = true;
+                    $this->messages[] = 'Error during moving file ' . $this->_getConfig('import', $this->code . '_path') . '/' . $file . ' to the archives';
+                }
+            }
+        } else {
+            if ($archivesPath = $this->_getConfig('import', $this->code . '_archive_path')) {
+                if (!$this->connection->mv($file, $archivesPath . '/' . $file)) {
+                    $this->hasError = true;
+                    $this->messages[] = 'Error during moving file ' . $this->_getConfig('import', $this->code . '_path') . '/' . $file . ' to the archives';
+                }
             }
         }
     }
