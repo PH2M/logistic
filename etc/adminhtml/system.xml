@@ -61,6 +61,10 @@
                         <field id="type" separator="|">sftp|ftp</field>
                     </depends>
                 </field>
+                <field id="passive" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Use passive mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
             <group id="import" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Import</label>

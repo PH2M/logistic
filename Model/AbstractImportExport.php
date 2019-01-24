@@ -158,11 +158,19 @@ abstract class AbstractImportExport
                 $host .= ':' . $configPort;
             }
 
-            $this->connection->open([
+            $params = [
                 'host'      => $host,
+                // FTP needs user and SFTP needs username so it's easier to send both
+                'user'      => $this->_getConfig('connection', 'username'),
                 'username'  => $this->_getConfig('connection', 'username'),
-                'password'  => $this->_getConfig('connection', 'password')
-            ]);
+                'password'  => $this->_getConfig('connection', 'password'),
+            ];
+
+            if ($this->_getConfig('connection', 'passive')) {
+                $params['passive'] = true;
+            }
+
+            $this->connection->open($params);
         } else {
             $this->connection->open([
                 'path' => $this->dir->getPath('var')
