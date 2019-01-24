@@ -9,6 +9,7 @@ Magento >= 2.1.0
 Installation
 ------------
 ```
+composer config repositories.firegento_extendedimport2 vcs https://github.com/firegento/FireGento_ExtendedImport2
 composer require ph2m/logistic
 bin/magento module:enable FireGento_FastSimpleImport FireGento_ExtendedImport PH2M_Logistic
 bin/magento setup:upgrade
