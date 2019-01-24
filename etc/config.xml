@@ -19,7 +19,6 @@
     <default>
         <logistic>
             <general>
-                <log_enable>0</log_enable>
                 <field_separator><![CDATA[,]]></field_separator>
                 <field_enclosure><![CDATA["]]></field_enclosure>
             </general>
