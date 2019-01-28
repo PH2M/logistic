@@ -176,9 +176,7 @@ abstract class AbstractImport extends AbstractImportExport
     protected function _downloadFiles()
     {
         $this->_initConnection();
-
         $files = $this->_getFilesList();
-
         $this->_readFiles($files);
     }
 
@@ -188,25 +186,15 @@ abstract class AbstractImport extends AbstractImportExport
     protected function _getFilesList()
     {
         $filePattern = $this->_getConfig('import', $this->code . '_file_pattern');
+        $files = $this->connection->ls();
 
-        if ($this->_getConfig('connection', 'type') == Connectiontype::CONNECTION_TYPE_LOCAL){
-            $files = $this->connection->ls(File::GREP_FILES);
-            $usedFiles = [];
-            foreach ($files as $file){
-                if (preg_match($filePattern, $file['text'])){
-                    $usedFiles[] = $file['text'];
-                }
-            }
-            return $usedFiles;
-        }
-        else {
-            $files = $this->connection->rawls();
-
-            return array_keys(array_filter($files, function($fileDetails, $fileName) use ($filePattern) {
-                // It must be a file (type 1) and match the config pattern
-                return $fileDetails['type'] == 1 && preg_match($filePattern, $fileName);
-            }, ARRAY_FILTER_USE_BOTH));
-        }
+        return array_map(function($fileDetails) {
+            return $fileDetails['text'];
+            },
+            array_filter($files, function($fileDetails) use ($filePattern) {
+                return preg_match($filePattern, $fileDetails['text']);
+            })
+        );
     }
 
     /**
@@ -222,7 +210,6 @@ abstract class AbstractImport extends AbstractImportExport
         $pathToSaveFiles = BP . DIRECTORY_SEPARATOR . FsDirectoryList::VAR_DIR . DIRECTORY_SEPARATOR . 'logistic' . DIRECTORY_SEPARATOR . $this->code;
 
         if (!is_dir($pathToSaveFiles)) {
-
             mkdir($pathToSaveFiles, 0777, true);
         }
 
