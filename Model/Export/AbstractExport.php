@@ -195,7 +195,9 @@ abstract class AbstractExport extends AbstractImportExport
             if (is_string($content)) {
                 $file->write($content);
             } else {
-                $file->writeCsv($header, $this->fieldSeparator, $this->fieldEnclosure);
+                if (count($header)) {
+                    $file->writeCsv($header, $this->fieldSeparator, $this->fieldEnclosure);
+                }
 
                 foreach ($content as $line) {
                     $file->writeCsv($line, $this->fieldSeparator, $this->fieldEnclosure);
