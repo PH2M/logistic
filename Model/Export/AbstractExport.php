@@ -202,11 +202,15 @@ abstract class AbstractExport extends AbstractImportExport
                 }
             }
 
-            if ($this->connection->write($fileName, $filePath)) {
-                $this->messages[] = 'File ' . $fileName . ' exported.';
+            if ($this->_getConfig('connection', 'type') == Connectiontype::CONNECTION_TYPE_LOCAL) {
+                $this->messages[] = 'File ' . $fileName . ' created.';
             } else {
-                $this->hasError = true;
-                $this->messages[] = 'Error on exporting file ' . $fileName . '.';
+                if ($this->connection->write($fileName, $filePath)) {
+                    $this->messages[] = 'File ' . $fileName . ' exported.';
+                } else {
+                    $this->hasError = true;
+                    $this->messages[] = 'Error on exporting file ' . $fileName . '.';
+                }
             }
         }
     }
