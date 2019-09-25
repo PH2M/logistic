@@ -239,10 +239,19 @@ abstract class AbstractImport extends AbstractImportExport
 
     /**
      * @param $fileToImport
+     */
+    protected function _beforeImportFile($fileToImport)
+    {
+        
+    }
+
+    /**
+     * @param $fileToImport
      * @throws \Magento\Framework\Exception\CouldNotSaveException
      */
     protected function _importFile($fileToImport)
     {
+        $this->_beforeImportFile($fileToImport);
         $start = microtime(true);
 
         /** @var Log $log */
