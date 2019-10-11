@@ -464,7 +464,7 @@ abstract class AbstractImport extends AbstractImportExport
     protected function _moveFileToArchives($file)
     {
         if ($this->_getConfig('connection', 'type') == Connectiontype::CONNECTION_TYPE_LOCAL){
-            $archivesPath = $this->dir->getPath('var') . $this->_getConfig('import', $this->code . '_archive_path');
+            $archivesPath = $this->_getConfig('import', $this->code . '_archive_path') ? $this->dir->getPath('var') . $this->_getConfig('import', $this->code . '_archive_path') : '';
         } else {
             $archivesPath = $this->_getConfig('import', $this->code . '_archive_path');
         }
