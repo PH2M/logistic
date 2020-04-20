@@ -337,6 +337,10 @@ abstract class AbstractImport extends AbstractImportExport
             $dataToImport = $this->_beforeImportData($dataToImport);
             $importer->processImport($dataToImport);
 
+            if ($errorMessages = $importer->getErrorMessages()) {
+                $this->messages[] = $errorMessages;
+            }
+
             if ($importer->getValidationResult()) {
                 $result['success'] = true;
             } else {
@@ -344,6 +348,7 @@ abstract class AbstractImport extends AbstractImportExport
                 $result['success'] = false;
                 $result['message'] = $importer->getLogTrace();
             }
+
             $result['success'] = $importer->getValidationResult();
         } catch (\Exception $e) {
             $this->hasError = true;
