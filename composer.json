@@ -28,7 +28,7 @@
   "repositories": {
     "firegento_extendedimport2": {
       "type": "vcs",
-      "url": "https://github.com/firegento/FireGento_ExtendedImport2"
+      "url": "https://github.com/PH2M/FireGento_ExtendedImport2"
     }
   }
 }
