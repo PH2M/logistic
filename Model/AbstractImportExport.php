@@ -130,9 +130,6 @@ abstract class AbstractImportExport
         $this->logRepository        = $logRepository;
         $this->connectionTypeSource = $connectiontypeSource;
         $this->dir                  = $dir;
-
-        $this->fieldSeparator = $this->_getConfig('general', 'field_separator');
-        $this->fieldEnclosure = $this->_getConfig('general', 'field_enclosure');
     }
 
     /**
@@ -143,6 +140,22 @@ abstract class AbstractImportExport
     protected function _getConfig($group, $field)
     {
         return $this->scopeConfig->getValue('logistic/' . $group . '/' . $field, ScopeInterface::SCOPE_STORE);
+    }
+
+    protected function getFieldSeparator(): string
+    {
+        if (!isset($this->fieldSeparator)) {
+            $this->fieldSeparator = $this->_getConfig('general', 'field_separator');
+        }
+        return $this->fieldSeparator;
+    }
+
+    protected function getFieldEnclosure(): string
+    {
+        if (!isset($this->fieldEnclosure)) {
+            $this->fieldEnclosure = $this->_getConfig('general', 'field_enclosure');
+        }
+        return $this->fieldEnclosure;
     }
 
     /**
