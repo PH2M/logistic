@@ -269,7 +269,7 @@ abstract class AbstractImport extends AbstractImportExport
         $isHeader       = true;
         $dataToImport   = [];
 
-        while ($data = $fileReader->readCsv(0, $this->fieldSeparator, $this->fieldEnclosure)) {
+        while ($data = $fileReader->readCsv(0, $this->getFieldSeparator(), $this->getFieldEnclosure())) {
             if ($isHeader) {
                 $header = $this->_renameHeaderColumns($data);
                 $isHeader = false;
@@ -337,6 +337,10 @@ abstract class AbstractImport extends AbstractImportExport
             $dataToImport = $this->_beforeImportData($dataToImport);
             $importer->processImport($dataToImport);
 
+            if ($errorMessages = $importer->getErrorMessages()) {
+                $this->messages[] = $errorMessages;
+            }
+
             if ($importer->getValidationResult()) {
                 $result['success'] = true;
             } else {
@@ -344,6 +348,7 @@ abstract class AbstractImport extends AbstractImportExport
                 $result['success'] = false;
                 $result['message'] = $importer->getLogTrace();
             }
+
             $result['success'] = $importer->getValidationResult();
         } catch (\Exception $e) {
             $this->hasError = true;
@@ -464,7 +469,7 @@ abstract class AbstractImport extends AbstractImportExport
     protected function _moveFileToArchives($file)
     {
         if ($this->_getConfig('connection', 'type') == Connectiontype::CONNECTION_TYPE_LOCAL){
-            $archivesPath = $this->dir->getPath('var') . $this->_getConfig('import', $this->code . '_archive_path');
+            $archivesPath = $this->_getConfig('import', $this->code . '_archive_path') ? $this->dir->getPath('var') . $this->_getConfig('import', $this->code . '_archive_path') : '';
         } else {
             $archivesPath = $this->_getConfig('import', $this->code . '_archive_path');
         }
