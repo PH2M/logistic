@@ -270,7 +270,7 @@ abstract class AbstractImport extends AbstractImportExport
         $isHeader       = true;
         $dataToImport   = [];
 
-        while ($data = $fileReader->readCsv(0, $this->fieldSeparator, $this->fieldEnclosure)) {
+        while ($data = $fileReader->readCsv(0, $this->getFieldSeparator(), $this->getFieldEnclosure())) {
             if ($isHeader) {
                 $header = $this->_renameHeaderColumns($data);
                 $isHeader = false;
