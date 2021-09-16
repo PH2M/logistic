@@ -221,6 +221,7 @@ abstract class AbstractImport extends AbstractImportExport
                 throw new FileSystemException(__('Error while save file to %1', $filePath));
             }
         }
+        $this->connection->close();
     }
 
     /**
