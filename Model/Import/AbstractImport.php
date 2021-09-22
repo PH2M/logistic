@@ -221,7 +221,6 @@ abstract class AbstractImport extends AbstractImportExport
                 throw new FileSystemException(__('Error while save file to %1', $filePath));
             }
         }
-        $this->connection->close();
     }
 
     /**
@@ -229,13 +228,12 @@ abstract class AbstractImport extends AbstractImportExport
      */
     protected function _importDownloadedFiles()
     {
+        $this->connection->close();
         if (count($this->filesToImport)) {
             foreach ($this->filesToImport as $fileToImport) {
                 $this->_importFile($fileToImport);
             }
         }
-
-        $this->connection->close();
     }
 
     /**
