@@ -473,9 +473,11 @@ abstract class AbstractImport extends AbstractImportExport
             $archivesPath = $this->_getConfig('import', $this->code . '_archive_path');
         }
 
+        $this->_initConnection();
         if ($archivesPath && !$this->connection->mv($file, $archivesPath . '/' . $file . '-' . time())) {
             $this->hasError = true;
             $this->messages[] = 'Error during moving file ' . $this->_getConfig('import', $this->code . '_path') . '/' . $file . ' to the archives';
         }
+        $this->connection->close();
     }
 }
