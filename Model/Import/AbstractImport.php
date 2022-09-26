@@ -412,21 +412,23 @@ abstract class AbstractImport extends AbstractImportExport
      */
     protected function _reportResult()
     {
-        if (count($this->messages)) {
-            /** @var Log $log */
-            $log = $this->logFactory->create();
-
-            if ($this->hasError) {
-                $log->setStatus(Log::STATUS_ERROR);
-            } else {
-                $log->setStatus(Log::STATUS_SUCCESS);
-            }
-
-            $log->setMessage(implode(PHP_EOL, $this->messages))
-                ->setEntityType($this->code);
-
-            $this->logRepository->save($log);
+        if (!count($this->messages)) {
+            $this->messages[] = __('Nothing to import.');
         }
+
+        /** @var Log $log */
+        $log = $this->logFactory->create();
+
+        if ($this->hasError) {
+            $log->setStatus(Log::STATUS_ERROR);
+        } else {
+            $log->setStatus(Log::STATUS_SUCCESS);
+        }
+
+        $log->setMessage(implode(PHP_EOL, $this->messages))
+            ->setEntityType($this->code);
+
+        $this->logRepository->save($log);
     }
 
     /**
