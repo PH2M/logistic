@@ -128,8 +128,6 @@ abstract class AbstractImport extends AbstractImportExport
         $this->importerFactory      = $importerFactory;
         $this->storeManager         = $storeManager;
 
-        $this->messages             = [];
-
         parent::__construct($ftp, $sftp, $local, $scopeConfig, $logRepository, $logFactory, $connectiontypeSource, $dir);
     }
 

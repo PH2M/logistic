@@ -91,7 +91,7 @@ abstract class AbstractImportExport
     /**
      * @var array
      */
-    protected $messages;
+    protected $messages = [];
 
     /**
      * @var DirectoryList
